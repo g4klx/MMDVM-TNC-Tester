@@ -18,10 +18,13 @@
 
 #include "MMDVM-TNC-Tester.h"
 #include "StopWatch.h"
+#include "Thread.h"
+
 #include "KISSDefines.h"
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <cassert>
 
 int main(int argc, char** argv)
@@ -110,7 +113,7 @@ int CMMDVM_TNC_Tester::run()
 		if (!ret)
 			break;
 
-		::Sleep(10U);
+		CThread::sleep(10U);
 	}
 
 	m_serial.close();
