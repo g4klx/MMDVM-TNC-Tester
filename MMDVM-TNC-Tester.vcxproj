@@ -142,11 +142,13 @@
     <ClInclude Include="KISSDefines.h" />
     <ClInclude Include="MMDVM-TNC-Tester.h" />
     <ClInclude Include="StopWatch.h" />
+    <ClInclude Include="Thread.h" />
     <ClInclude Include="UARTController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MMDVM-TNC-Tester.cpp" />
     <ClCompile Include="StopWatch.cpp" />
+    <ClCompile Include="Thread.cpp" />
     <ClCompile Include="UARTController.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

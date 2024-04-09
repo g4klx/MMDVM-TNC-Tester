@@ -116,6 +116,8 @@ int CMMDVM_TNC_Tester::run()
 		CThread::sleep(10U);
 	}
 
+	receive();
+
 	m_serial.close();
 
 	return 0;
@@ -219,7 +221,7 @@ void CMMDVM_TNC_Tester::process()
 		n += 7U;
 	}
 
-	text += ' ';
+	text += ": ";
 
 	std::string cr = "";
 	if (((m_buffer[7U] & 0x80U) == 0x80U) && ((m_buffer[14U] & 0x80U) == 0x00U))
@@ -320,9 +322,41 @@ void CMMDVM_TNC_Tester::process()
 		}
 	}
 
-	n += 2U;
+	n++;
 
-	::fprintf(stderr, "%s %.*s\n", text.c_str(), m_ptr - n, m_buffer + n);
+	switch (m_buffer[n]) {
+	case 0xF0U:		// No L3
+		::fprintf(stderr, "%s %.*s\n", text.c_str(), m_ptr - n - 1U, m_buffer + n + 1U);
+		break;
+	case 0xCFU:		// NET/ROM
+		::fprintf(stderr, " PID=NET/ROM\n");
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	case 0xCCU:		// ARP
+		::fprintf(stderr, " PID=ARP\n");
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	case 0xCDU:		// IP
+		::fprintf(stderr, " PID=IP\n");
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	case 0x01U:		// ROSE
+		::fprintf(stderr, " PID=ROSE\n");
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	case 0x08U:		// Fragment
+		::fprintf(stderr, " PID=Fragment\n");
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	case 0xCEU:		// FlexNet
+		::fprintf(stderr, " PID=FlexNet\n");
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	default:
+		::fprintf(stderr, " PID=%02X\n", m_buffer[n]);
+		dump(m_buffer + n + 1U, m_ptr - n - 1U);
+		break;
+	}
 }
 
 bool CMMDVM_TNC_Tester::decodeAddress(const uint8_t* data, std::string& text, bool isDigi) const
@@ -436,38 +470,35 @@ bool CMMDVM_TNC_Tester::writeKISS(const uint8_t* frame, size_t length)
 	return true;
 }
 
-void CMMDVM_TNC_Tester::dump(const char* title, const uint8_t* buffer, size_t length) const
+void CMMDVM_TNC_Tester::dump(const uint8_t* buffer, size_t length) const
 {
-	assert(title != nullptr);
 	assert(buffer != nullptr);
 	assert(length > 0U);
-
-	::fprintf(stdout, "%s\n", title);
 
 	size_t offset = 0U;
 
 	while (offset < length) {
-		::fprintf(stdout, "%04X: ", (unsigned int)offset);
+		::fprintf(stderr, "%04X: ", (unsigned int)offset);
 
 		for (unsigned int i = 0U; i < 16U; i++) {
 			if ((offset + i) < length)
-				::fprintf(stdout, "%02X ", buffer[offset + i]);
+				::fprintf(stderr, "%02X ", buffer[offset + i]);
 			else
-				::fprintf(stdout, "   ");
+				::fprintf(stderr, "   ");
 		}
 
-		::fprintf(stdout, "  *");
+		::fprintf(stderr, "  *");
 
 		for (unsigned int i = 0U; i < 16U; i++) {
 			if ((offset + i) < length) {
 				if (isprint(buffer[offset + i]))
-					::fprintf(stdout, "%c", buffer[offset + i]);
+					::fprintf(stderr, "%c", buffer[offset + i]);
 				else
-					::fprintf(stdout, ".");
+					::fprintf(stderr, ".");
 			}
 		}
 
-		::fprintf(stdout, "*\n");
+		::fprintf(stderr, "*\n");
 
 		offset += 16U;
 	}

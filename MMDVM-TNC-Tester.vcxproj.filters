@@ -23,6 +23,9 @@
     <ClInclude Include="StopWatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UARTController.cpp">
@@ -32,6 +35,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StopWatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

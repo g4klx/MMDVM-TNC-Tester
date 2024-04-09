@@ -48,7 +48,7 @@ private:
 	void process();
 	bool decodeAddress(const uint8_t* data, std::string& text, bool isDigi = false) const;
 	void encodeAddress(uint8_t* data, const std::string& callsign, bool command, bool end) const;
-	void dump(const char* title, const uint8_t* data, size_t length) const;
+	void dump(const uint8_t* data, size_t length) const;
 };
 
 #endif
